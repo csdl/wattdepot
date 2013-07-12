@@ -30,7 +30,7 @@ public class TestSharkRowParser {
     RowParser parser = new SharkRowParser(TOOL_NAME, SERVER_URI, SOURCE_NAME);
     String row = "10/6/11 23:55,4865.527344,67080";
     SensorData data =
-      new SensorData(Tstamp.makeTimestamp("2011-10-06T23:55:00.000-10:00"), TOOL_NAME, Source
+      new SensorData(Tstamp.makeTimestamp("2011-10-06T23:55:00.000"), TOOL_NAME, Source
           .sourceToUri(SOURCE_NAME, SERVER_URI));
     Property powerConsumed = new Property(SensorData.POWER_CONSUMED, "4865.527344");
     Property energyConsumed = new Property(SensorData.ENERGY_CONSUMED_TO_DATE, "67080.0");
