@@ -168,8 +168,8 @@ public class TestGVisualizationResource extends ServerTestHelper {
     String response = wc.getResponse(calculatedUrl).getText();
 
     // strip out dates before compare to ignore time zone issues
-    // expectedResponse = expectedResponse.replaceAll("new Date\\(([0-9,]*)\\)", "date");
-    // response = response.replaceAll("new Date\\(([0-9,]*)\\)", "date");
+    expectedResponse = expectedResponse.replaceAll("new Date\\(([0-9,]*)\\)", "date");
+    response = response.replaceAll("new Date\\(([0-9,]*)\\)", "date");
     assertEquals("GViz calculated response is incorrect", expectedResponse, response);
 
     // Test all parameters
