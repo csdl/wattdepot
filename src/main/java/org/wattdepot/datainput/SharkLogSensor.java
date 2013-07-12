@@ -5,7 +5,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.xml.bind.JAXBException;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -19,6 +21,8 @@ import org.wattdepot.client.OverwriteAttemptedException;
 import org.wattdepot.client.ResourceNotFoundException;
 import org.wattdepot.client.WattDepotClient;
 import org.wattdepot.resource.sensordata.jaxb.SensorData;
+
+import au.com.bytecode.opencsv.CSVParser;
 import au.com.bytecode.opencsv.CSVReader;
 
 /**
@@ -154,7 +158,7 @@ public class SharkLogSensor {
     try {
       if (skipFirstRow) {
         // use 4 arg constructor with skip lines = 1
-        reader = new CSVReader(new FileReader(filename), ',', CSVReader.DEFAULT_QUOTE_CHARACTER, 1);
+        reader = new CSVReader(new FileReader(filename), ',', CSVParser.DEFAULT_QUOTE_CHARACTER, 1);
       }
       else {
         reader = new CSVReader(new FileReader(filename), ',');

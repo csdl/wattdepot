@@ -107,6 +107,10 @@ public class ServerProperties {
    * =2625612
    */
   public static final String MAX_THREADS = "wattdepot-server.maxthreads";
+  /** environment variable for over writing the DB_USERNAME_KEY value. */
+  public static final String ENV_DB_USERNAME = "WATTDEPOT_DB_USERNAME";
+  /** environment variable for over writing the DB_PASSWORD_KEY value. */
+  public static final String ENV_DB_PASSWORD = "WATTDEPOT_DB_PASSWORD";
 
   /** Where we store the properties. */
   private Properties properties;
@@ -241,6 +245,17 @@ public class ServerProperties {
           "org.wattdepot.server.db.postgres.PostgresStorageImplementation");
       properties.setProperty(DATABASE_URL_KEY, properties.getProperty(HEROKU_DATABASE_URL_KEY));
       properties.setProperty(TEST_HOSTNAME_KEY, properties.getProperty(HEROKU_HOSTNAME_KEY));
+    }
+    // If the ENV_DB_USERNAME environment variable is set override the DB_USERNAME
+    if (System.getenv(ENV_DB_USERNAME) != null) {
+      System.out.println("Overriding " + DB_USERNAME_KEY + " from environment variable " +
+          ENV_DB_USERNAME);
+      properties.setProperty(DB_USERNAME_KEY, System.getenv(ENV_DB_USERNAME));
+    }
+    if (System.getenv(ENV_DB_PASSWORD) != null) {
+      System.out.println("Overriding " + DB_PASSWORD_KEY + " from environment variable " +
+          ENV_DB_PASSWORD);
+      properties.setProperty(DB_PASSWORD_KEY, System.getenv(ENV_DB_PASSWORD));
     }
 
     trimProperties(properties);

@@ -4,9 +4,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -15,6 +17,8 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 import org.wattdepot.resource.sensordata.jaxb.SensorData;
 import org.wattdepot.resource.sensordata.jaxb.SensorDatas;
+
+import au.com.bytecode.opencsv.CSVParser;
 import au.com.bytecode.opencsv.CSVReader;
 
 /**
@@ -85,7 +89,7 @@ public class OscarDataConverter {
     CSVReader reader;
     try {
       // use 4 arg constructor with skip lines = 1 to skip the column header
-      reader = new CSVReader(new FileReader(filename), ',', CSVReader.DEFAULT_QUOTE_CHARACTER, 1);
+      reader = new CSVReader(new FileReader(filename), ',', CSVParser.DEFAULT_QUOTE_CHARACTER, 1);
     }
     catch (FileNotFoundException e) {
       System.err.format("Input file %s not found.%n", inputFile.toString());

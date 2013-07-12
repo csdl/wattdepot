@@ -1,0 +1,17 @@
+language: java
+jdk:
+  - oraclejdk7
+  - openjdk7
+  - openjdk6
+# whitelist
+branches:
+  only:
+    - master
+    - development
+env:
+    global:
+      - WATTDEPOT_DB_USERNAME=postgres
+postgres:
+    adapter: postgresql
+    database: wattdepot
+    username: postgres
