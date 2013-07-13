@@ -99,7 +99,7 @@ public class TestSensorDataJaxb {
     assertEquals("SensorData did not create expected toString",
         "SensorData [properties=[Property [key=foo-key, value=foo], Property [key=bar-key,"
             + " value=bar]], source=http://localhost:8183/wattdepot/sources/saunders-hall,"
-            + " timestamp=2009-07-28T08:00:00.000-10:00, tool=JUnit]", data1.toString());
+            + " timestamp=" + timestamp1 + ", tool=JUnit]", data1.toString());
   }
 
   /**

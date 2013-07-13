@@ -59,13 +59,13 @@ public class TestSourceSummaryJaxb {
    */
   @Test
   public void testSourceSummaryToString() throws Exception {
-    String expectedOutput =
-        "SourceSummary [href=http://localhost:8183/wattdepot/sources/foo,"
-            + " firstSensorData=2009-07-28T09:00:00.000-10:00,"
-            + " lastSensorData=2009-08-28T09:00:00.000-10:00," + " totalSensorDatas=2880]";
-    String sourceUri = "http://localhost:8183/wattdepot/sources/foo";
     XMLGregorianCalendar firstTimestamp = Tstamp.makeTimestamp("2009-07-28T09:00:00.000-10:00");
     XMLGregorianCalendar lastTimestamp = Tstamp.makeTimestamp("2009-08-28T09:00:00.000-10:00");
+    String expectedOutput =
+        "SourceSummary [href=http://localhost:8183/wattdepot/sources/foo,"
+            + " firstSensorData=" + firstTimestamp + ","
+            + " lastSensorData=" + lastTimestamp + ", totalSensorDatas=2880]";
+    String sourceUri = "http://localhost:8183/wattdepot/sources/foo";
     long dataCount = 2880L;
     SourceSummary summary1 = new SourceSummary();
     summary1.setHref(sourceUri);

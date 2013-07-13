@@ -31,7 +31,7 @@ public class TestVerisRowParser {
     // Example row from 2mauka meter
     String row = "2009-09-01 01:01:01\t0\t0\t0\t37785.62\t3.719";
     SensorData data =
-      new SensorData(Tstamp.makeTimestamp("2009-09-01T01:01:01.000-10:00"), TOOL_NAME, Source
+      new SensorData(Tstamp.makeTimestamp("2009-09-01T01:01:01.000"), TOOL_NAME, Source
           .sourceToUri(SOURCE_NAME, SERVER_URI));
     Property powerConsumed = new Property(SensorData.POWER_CONSUMED, "3719.0");
     Property energyConsumed = new Property(SensorData.ENERGY_CONSUMED_TO_DATE, "3.778562E7");
