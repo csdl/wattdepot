@@ -1,11 +1,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
   <groupId>org.wattdepot</groupId>
   <artifactId>wattdepot</artifactId>
   <version>2.1</version>
-
   <name>WattDepot</name>
   <url>https://github.com/csdl/wattdepot/</url>
 
@@ -166,8 +164,8 @@
 		<artifactId>jcs</artifactId>
 		<version>${jcs.version}</version>
 	</dependency>       	
-</dependencies>
-<repositories>
+  </dependencies>
+  <repositories>
 	<repository>
 		<id>central</id>
 		<name>Maven Repository Switchboard</name>
@@ -192,8 +190,8 @@
         <name>Local repository that contains modbus</name>
         <url>file://${project.basedir}/repository</url>
 	</repository>
-</repositories>
-<build>
+  </repositories>
+  <build>
 	<defaultGoal>verify</defaultGoal>
 	<plugins>
 		<plugin>
@@ -549,14 +547,14 @@
 			</executions>
 		</plugin>
 	</plugins>
-</build>
-	<organization>
-		<name>Collaborative Software Development Laboratory</name>
-		<url>http://csdl.ics.hawaii.edu</url>
-	</organization>
-	<issueManagement>
-		<url>https://github.com/csdl/wattdepot/issues</url>
-		<system>GitHub Issues</system>
-	</issueManagement>
-	<description>WattDepot is an open source, RESTful web service that collects electricity data (such as current power utilization or cumulative power utilization) from meters and stores it in a database.</description>
+  </build>
+  <organization>
+    <name>Collaborative Software Development Laboratory</name>
+	<url>http://csdl.ics.hawaii.edu</url>
+  </organization>
+  <issueManagement>
+	<url>https://github.com/csdl/wattdepot/issues</url>
+	<system>GitHub Issues</system>
+  </issueManagement>
+  <description>WattDepot is an open source, RESTful web service that collects electricity data (such as current power utilization or cumulative power utilization) from meters and stores it in a database.</description>
 </project>
