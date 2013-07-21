@@ -7,7 +7,7 @@
   <version>2.1</version>
 
   <name>WattDepot</name>
-  <url>http://code.google.com/p/wattdepot/</url>
+  <url>https://github.com/csdl/wattdepot/</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -550,4 +550,13 @@
 		</plugin>
 	</plugins>
 </build>
+	<organization>
+		<name>Collaborative Software Development Laboratory</name>
+		<url>http://csdl.ics.hawaii.edu</url>
+	</organization>
+	<issueManagement>
+		<url>https://github.com/csdl/wattdepot/issues</url>
+		<system>GitHub Issues</system>
+	</issueManagement>
+	<description>WattDepot is an open source, RESTful web service that collects electricity data (such as current power utilization or cumulative power utilization) from meters and stores it in a database.</description>
 </project>
