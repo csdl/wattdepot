@@ -77,8 +77,10 @@ public class EGaugeSensor extends MultiThreadedSensor {
   @Override
   public void run() {
     SensorData data = null;
-
+    // CAM using /cgi-bin/egauge?tot provides v0.01 format data
     String eGaugeUri = "http://" + meterHostname + "/cgi-bin/egauge?tot";
+    // CAM using v1&tot returns v1.0 xml data.
+    // String eGaugeUri = "http://" + meterHostname + "/cgi-bin/egauge?v1&tot";
 
     DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
     domFactory.setNamespaceAware(true);
