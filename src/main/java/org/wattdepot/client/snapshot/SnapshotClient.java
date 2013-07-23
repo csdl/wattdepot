@@ -147,10 +147,6 @@ public class SnapshotClient {
       System.exit(1);
     }
 
-    if (snapshotClient == null) {
-      System.err.println("Unable to create SnapshotClient for some reason. Aborting.");
-      System.exit(1);
-    }
     System.out.format("%tc Snapshot started.%n", new Date());
     if (snapshotClient.makeSnapshot()) {
       System.out.format("%tc Snapshot created successfully.%n", new Date());
