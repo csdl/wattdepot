@@ -6,15 +6,14 @@ import org.restlet.resource.Get;
 import org.restlet.resource.ServerResource;
 
 /**
- * Represents the health of the WattDepot service. It is provided as a way to determine if the
- * WattDepot service is up and functioning normally (like a "ping" resource).
+ * Return a default help page when an unknown URI is provided.
  * 
  * @author Robert Brewer
  */
 public class NoResource extends ServerResource {
 
   /**
-   * String to send as a response to the health request.
+   * String to send as a response to the request.
    */
   protected static final String MESSAGE_TEXT =
       "<img src=\"http://code.google.com/p/wattdepot/logo?cct=1332883388\"/><br/>"
