@@ -9,6 +9,7 @@ import static org.wattdepot.server.ServerProperties.DB_USERNAME_KEY;
 import static org.wattdepot.server.ServerProperties.POSTGRES_INITIAL_SIZE_KEY;
 import static org.wattdepot.server.ServerProperties.POSTGRES_MAX_ACTIVE_KEY;
 import static org.wattdepot.server.ServerProperties.POSTGRES_SCHEMA_KEY;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -28,8 +29,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+
 import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.XMLGregorianCalendar;
+
 import org.apache.tomcat.jdbc.pool.DataSource;
 import org.apache.tomcat.jdbc.pool.PoolProperties;
 import org.wattdepot.resource.property.jaxb.Property;
@@ -171,6 +174,8 @@ public class PostgresStorageImplementation extends DbImplementation {
     PoolProperties poolProps = new PoolProperties();
 
     try {
+      // Ensure that the driver is loaded. We have to do this when we run from a jar file.
+      Class.forName(driver);
       // First try connection to configured database name
       conn = DriverManager.getConnection(this.connectionUrl);
     }
@@ -212,6 +217,9 @@ public class PostgresStorageImplementation extends DbImplementation {
         this.logger.severe(msg + StackTrace.toString(e));
         throw new RuntimeException(msg, e);
       }
+    } 
+    catch (ClassNotFoundException e) {
+      e.printStackTrace();
     }
     finally {
       try {
