@@ -1,31 +1,89 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" output="target/classes" path="src/main/java">
-		<attributes>
-			<attribute name="optional" value="true"/>
-			<attribute name="maven.pomderived" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry excluding="**" kind="src" output="target/classes" path="src/main/resources">
-		<attributes>
-			<attribute name="maven.pomderived" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="src" output="target/test-classes" path="src/test/java">
-		<attributes>
-			<attribute name="optional" value="true"/>
-			<attribute name="maven.pomderived" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
-		<attributes>
-			<attribute name="maven.pomderived" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6">
-		<attributes>
-			<attribute name="maven.pomderived" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="output" path="target/classes"/>
+  <classpathentry kind="src" path="src/test/java" output="target/test-classes" including="**/*.java"/>
+  <classpathentry kind="src" path="src/main/java" including="**/*.java"/>
+  <classpathentry kind="src" path="src/main/resources" excluding="**/*.java"/>
+  <classpathentry kind="output" path="target/classes"/>
+  <classpathentry kind="var" path="M2_REPO/javax/comm/comm/3.0-u1/comm-3.0-u1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/javax/servlet/servlet-api/2.3/servlet-api-2.3.jar" sourcepath="M2_REPO/javax/servlet/servlet-api/2.3/servlet-api-2.3-sources.jar"/>
+  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+  <classpathentry kind="var" path="M2_REPO/commons-pool/commons-pool/1.6/commons-pool-1.6.jar" sourcepath="M2_REPO/commons-pool/commons-pool/1.6/commons-pool-1.6-sources.jar">
+    <attributes>
+      <attribute value="jar:file:/Users/carletonmoore/.m2/repository/commons-pool/commons-pool/1.6/commons-pool-1.6-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/commons-dbcp/commons-dbcp/1.4/commons-dbcp-1.4.jar" sourcepath="M2_REPO/commons-dbcp/commons-dbcp/1.4/commons-dbcp-1.4-sources.jar">
+    <attributes>
+      <attribute value="jar:file:/Users/carletonmoore/.m2/repository/commons-dbcp/commons-dbcp/1.4/commons-dbcp-1.4-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/org/apache/tomcat/tomcat-jdbc/7.0.42/tomcat-jdbc-7.0.42.jar" sourcepath="M2_REPO/org/apache/tomcat/tomcat-jdbc/7.0.42/tomcat-jdbc-7.0.42-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/apache/tomcat/tomcat-juli/7.0.42/tomcat-juli-7.0.42.jar" sourcepath="M2_REPO/org/apache/tomcat/tomcat-juli/7.0.42/tomcat-juli-7.0.42-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/junit/junit/4.11/junit-4.11.jar" sourcepath="M2_REPO/junit/junit/4.11/junit-4.11-sources.jar">
+    <attributes>
+      <attribute value="jar:file:/Users/carletonmoore/.m2/repository/junit/junit/4.11/junit-4.11-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar" sourcepath="M2_REPO/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3-sources.jar">
+    <attributes>
+      <attribute value="jar:file:/Users/carletonmoore/.m2/repository/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/commons-lang/commons-lang/2.6/commons-lang-2.6.jar" sourcepath="M2_REPO/commons-lang/commons-lang/2.6/commons-lang-2.6-sources.jar">
+    <attributes>
+      <attribute value="jar:file:/Users/carletonmoore/.m2/repository/commons-lang/commons-lang/2.6/commons-lang-2.6-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/commons-cli/commons-cli/1.2/commons-cli-1.2.jar" sourcepath="M2_REPO/commons-cli/commons-cli/1.2/commons-cli-1.2-sources.jar">
+    <attributes>
+      <attribute value="jar:file:/Users/carletonmoore/.m2/repository/commons-cli/commons-cli/1.2/commons-cli-1.2-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/commons-logging/commons-logging/1.1.3/commons-logging-1.1.3.jar" sourcepath="M2_REPO/commons-logging/commons-logging/1.1.3/commons-logging-1.1.3-sources.jar">
+    <attributes>
+      <attribute value="jar:file:/Users/carletonmoore/.m2/repository/commons-logging/commons-logging/1.1.3/commons-logging-1.1.3-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/net/sf/opencsv/opencsv/2.3/opencsv-2.3.jar" sourcepath="M2_REPO/net/sf/opencsv/opencsv/2.3/opencsv-2.3-sources.jar">
+    <attributes>
+      <attribute value="jar:file:/Users/carletonmoore/.m2/repository/net/sf/opencsv/opencsv/2.3/opencsv-2.3-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/com/ibm/icu/icu4j/51.2/icu4j-51.2.jar" sourcepath="M2_REPO/com/ibm/icu/icu4j/51.2/icu4j-51.2-sources.jar">
+    <attributes>
+      <attribute value="jar:file:/Users/carletonmoore/.m2/repository/com/ibm/icu/icu4j/51.2/icu4j-51.2-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/com/google/collections/google-collections/1.0-rc2/google-collections-1.0-rc2.jar" sourcepath="M2_REPO/com/google/collections/google-collections/1.0-rc2/google-collections-1.0-rc2-sources.jar">
+    <attributes>
+      <attribute value="jar:file:/Users/carletonmoore/.m2/repository/com/google/collections/google-collections/1.0-rc2/google-collections-1.0-rc2-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/org/apache/derby/derby/10.10.1.1/derby-10.10.1.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/sleepycat/je/5.0.73/je-5.0.73.jar" sourcepath="M2_REPO/com/sleepycat/je/5.0.73/je-5.0.73-sources.jar">
+    <attributes>
+      <attribute value="jar:file:/Users/carletonmoore/.m2/repository/com/sleepycat/je/5.0.73/je-5.0.73-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/com/google/visualization/visualization-datasource/1.0.2/visualization-datasource-1.0.2.jar" sourcepath="M2_REPO/com/google/visualization/visualization-datasource/1.0.2/visualization-datasource-1.0.2-sources.jar">
+    <attributes>
+      <attribute value="jar:file:/Users/carletonmoore/.m2/repository/com/google/visualization/visualization-datasource/1.0.2/visualization-datasource-1.0.2-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/org/restlet/jse/org.restlet/2.1.1/org.restlet-2.1.1.jar" sourcepath="M2_REPO/org/restlet/jse/org.restlet/2.1.1/org.restlet-2.1.1-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/net/wimpi/modbus/jamod/1.2/jamod-1.2.jar"/>
+  <classpathentry kind="var" path="M2_REPO/postgresql/postgresql/9.1-901-1.jdbc4/postgresql-9.1-901-1.jdbc4.jar" sourcepath="M2_REPO/postgresql/postgresql/9.1-901-1.jdbc4/postgresql-9.1-901-1.jdbc4-sources.jar">
+    <attributes>
+      <attribute value="jar:file:/Users/carletonmoore/.m2/repository/postgresql/postgresql/9.1-901-1.jdbc4/postgresql-9.1-901-1.jdbc4-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/httpunit/httpunit/1.7/httpunit-1.7.jar" sourcepath="M2_REPO/httpunit/httpunit/1.7/httpunit-1.7-sources.jar">
+    <attributes>
+      <attribute value="jar:file:/Users/carletonmoore/.m2/repository/httpunit/httpunit/1.7/httpunit-1.7-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/jtidy/jtidy/4aug2000r7-dev/jtidy-4aug2000r7-dev.jar" sourcepath="M2_REPO/jtidy/jtidy/4aug2000r7-dev/jtidy-4aug2000r7-dev-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/json/json/20090211/json-20090211.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/apache/jcs/jcs/1.3/jcs-1.3.jar"/>
+  <classpathentry kind="var" path="M2_REPO/concurrent/concurrent/1.0/concurrent-1.0.jar"/>
 </classpath>
