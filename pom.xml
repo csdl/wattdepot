@@ -122,6 +122,11 @@
 		<artifactId>visualization-datasource</artifactId>
 		<version>${google-visualization-java.version}</version>
 	</dependency>
+    <dependency> 
+      <groupId>org.restlet.jse</groupId>
+      <artifactId>org.restlet.ext.httpclient</artifactId>
+      <version>${restlet.version}</version>
+    </dependency>
     <dependency>  
 		<groupId>org.restlet.jse</groupId>  
 		<artifactId>org.restlet</artifactId>  
@@ -138,12 +143,11 @@
 <!--     <artifactId>org.restlet.ext.simple</artifactId> -->
 <!--     <version>${restlet.version}</version> -->
 <!--   </dependency> -->
-<!--   <dependency> -->
-<!--     <groupId>org.restlet.jse</groupId> -->
-<!--     <artifactId>org.restlet.ext.net</artifactId> -->
-<!--     <version>${restlet.version}</version> -->
-<!--   </dependency> -->
-  <dependency>
+<!--     <dependency> -->
+<!--       <artifactId>org.restlet.ext.net</artifactId> -->
+<!--       <version>${restlet.version}</version> -->
+<!--     </dependency> --> 
+    <dependency>
 		<groupId>net.wimpi.modbus</groupId>
 		<artifactId>jamod</artifactId>
 		<version>${modbus-jamod.version}</version>
