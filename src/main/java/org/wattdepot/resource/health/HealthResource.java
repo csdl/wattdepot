@@ -16,8 +16,10 @@ public class HealthResource extends ServerResource {
   /**
    * String to send as a response to the health request.
    */
-  protected static final String HEALTH_MESSAGE_TEXT = "WattDepot is alive.";
+  protected static final String HEALTH_MESSAGE_TEXT = " is alive.";
 
+  protected static final String WATTDEPOT_MESSAGE_TEXT = "WattDepot ";
+  
   /**
    * Initialize with attributes from the Request.
    */
@@ -35,6 +37,8 @@ public class HealthResource extends ServerResource {
    */
   @Get("txt")
   public String getTxt() {
-    return HEALTH_MESSAGE_TEXT;
+    return WATTDEPOT_MESSAGE_TEXT + 
+        getClass().getPackage().getImplementationVersion() + 
+        HEALTH_MESSAGE_TEXT;
   }
 }

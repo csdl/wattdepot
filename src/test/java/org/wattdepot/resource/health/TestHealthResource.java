@@ -21,7 +21,10 @@ public class TestHealthResource extends ServerTestHelper {
   public void testResource() throws Exception {
     WattDepotClient client = new WattDepotClient(getHostName());
     assertTrue("Server is unhealthy", client.isHealthy());
+    System.out.println(client.getHealthString());
     assertTrue("Unexpected server message",
-        client.getHealthString().equals(HealthResource.HEALTH_MESSAGE_TEXT));
+        client.getHealthString().equals(HealthResource.WATTDEPOT_MESSAGE_TEXT +
+            getClass().getPackage().getImplementationVersion() + 
+            HealthResource.HEALTH_MESSAGE_TEXT));
   }
 }
