@@ -26,7 +26,10 @@ import org.restlet.Component;
 import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.Restlet;
+import org.restlet.data.LocalReference;
 import org.restlet.data.Protocol;
+import org.restlet.resource.Directory;
+import org.restlet.routing.Redirector;
 import org.restlet.routing.Router;
 import org.restlet.routing.Template;
 import org.wattdepot.resource.NoResource;
@@ -217,6 +220,9 @@ public class Server extends Application {
     server.component = new Component();
     org.restlet.Server httpServer = new org.restlet.Server(Protocol.HTTP, port);
     server.component.getServers().add(httpServer);
+    // Needed for static file serving from the JAR file.
+    server.component.getClients().add(Protocol.CLAP);
+
     // Based on this mailing list thread, the following line will set the number of http listening
     // threads (when using the default server connector??). The value is set in ServerProperties.
     // Setting maxThreads too low can cause the server to spin with no threads available under
@@ -226,13 +232,13 @@ public class Server extends Application {
         .add("maxThreads", server.serverProperties.get(MAX_THREADS).toString());
     // More thread tweaks, based on this message from Restlet mailing list:
     // http://restlet.tigris.org/ds/viewMessage.do?dsForumId=4447&dsMessageId=2976752
-//    httpServer.getContext().getParameters().add("minThreads", "10");
-//    httpServer.getContext().getParameters().add("lowThreads", "145");
-//    httpServer.getContext().getParameters().add("maxQueued", "20");
+    // httpServer.getContext().getParameters().add("minThreads", "10");
+    // httpServer.getContext().getParameters().add("lowThreads", "145");
+    // httpServer.getContext().getParameters().add("maxQueued", "20");
 
-    // Only thread parameter for Simple server connector, so bump it up too: 
-//    httpServer.getContext().getParameters().add("defaultThreads", "50");
-    
+    // Only thread parameter for Simple server connector, so bump it up too:
+    // httpServer.getContext().getParameters().add("defaultThreads", "50");
+
     // Try turning off persistent connections to see if that helps thread exhaustion problems
     // httpServer.getContext().getParameters()
     // .add("persistingConnections", "false");
@@ -479,6 +485,24 @@ public class Server extends Application {
   public synchronized Restlet createInboundRoot() {
     Router router = new Router(getContext());
     router.setDefaultMatchingQuery(false);
+
+    // Use CLAP (ClassLoader Access Protocol) to access SPA directory from filesystem or JAR
+    // Directory directory = new Directory(getContext(), "clap://application/spa/");
+    Directory directory =
+        new Directory(getContext(), LocalReference.createClapReference(LocalReference.CLAP_CLASS,
+            "/spa"));
+    // CLAP doesn't do content negotiation, so must make indexName "index.html" not just "index"
+    // which is the default.
+    directory.setIndexName("index.html");
+    // directory.setNegotiatingContent(true);
+    router.attach("/spa/", directory);
+    router.attach("/spa", directory);
+
+    // For some reason, going directly to /spa/ does not direct users to index.hml, so create a
+    // different path that sends clients directly there.
+    Redirector redirector =
+        new Redirector(getContext(), "/wattdepot/spa/index.html", Redirector.MODE_CLIENT_PERMANENT);
+    router.attach("/app/", redirector);
 
     // This Router is used to control access to the User resource
     // Router userRouter = new Router(getContext());

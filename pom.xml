@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.wattdepot</groupId>
   <artifactId>wattdepot</artifactId>
-  <version>2.1-SNAPSHOT</version>
+  <version>2.2.1</version>
   <name>WattDepot</name>
   <url>https://github.com/csdl/wattdepot/</url>
   <packaging>jar</packaging>
@@ -13,8 +13,6 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	<targetJdk>1.6</targetJdk>
-	<maven.build.timestamp.format>MMdd</maven.build.timestamp.format>
-	<build.version>${project.version}.${maven.build.timestamp}</build.version>
 	
 	<!-- Dependency Versions -->
 	<berkeleydb.version>5.0.73</berkeleydb.version>
@@ -35,8 +33,10 @@
 	<modbus-jamod.version>1.2</modbus-jamod.version>
 	<opencsv.version>2.3</opencsv.version>
 	<pool.version>1.6</pool.version>
-	<postgres.version>9.1-901-1.jdbc4</postgres.version>
-	<restlet.version>2.2-M3</restlet.version>
+    <postgres.version>9.1-901-1.jdbc4</postgres.version>
+	<!-- Restlet 2.1.1 is the most recent version that does not run very slowly with static
+	     content from SPA. 2.1.2 has the slowness problem. -->
+	<restlet.version>2.1.2</restlet.version>
 	
 	<!-- Maven Plugin Versions -->
 	<antrun.plugin.version>1.7</antrun.plugin.version>
@@ -120,6 +120,17 @@
 		<artifactId>visualization-datasource</artifactId>
 		<version>${google-visualization-java.version}</version>
 	</dependency>
+    <dependency> 
+      <groupId>org.restlet.jse</groupId>
+      <artifactId>org.restlet.ext.httpclient</artifactId>
+      <version>${restlet.version}</version>
+    </dependency>
+    <!-- Trying to use the Jetty connector -->
+    <dependency> 
+      <groupId>org.restlet.jse</groupId>
+      <artifactId>org.restlet.ext.jetty</artifactId>
+      <version>${restlet.version}</version>
+    </dependency>
     <dependency>  
 		<groupId>org.restlet.jse</groupId>  
 		<artifactId>org.restlet</artifactId>  
@@ -127,20 +138,14 @@
 	</dependency>
 <!--   <dependency> -->
 <!--     <groupId>org.restlet.jse</groupId> -->
-<!--     <artifactId>org.restlet.ext.jetty</artifactId> -->
-<!--     <version>${restlet.version}</version> -->
-<!--   </dependency> -->
-<!--   <dependency> -->
-<!--     <groupId>org.restlet.jse</groupId> -->
 <!--     <artifactId>org.restlet.ext.simple</artifactId> -->
 <!--     <version>${restlet.version}</version> -->
 <!--   </dependency> -->
-<!--   <dependency> -->
-<!--     <groupId>org.restlet.jse</groupId> -->
-<!--     <artifactId>org.restlet.ext.net</artifactId> -->
-<!--     <version>${restlet.version}</version> -->
-<!--   </dependency> -->
-  <dependency>
+<!--     <dependency> -->
+<!--       <artifactId>org.restlet.ext.net</artifactId> -->
+<!--       <version>${restlet.version}</version> -->
+<!--     </dependency> --> 
+    <dependency>
 		<groupId>net.wimpi.modbus</groupId>
 		<artifactId>jamod</artifactId>
 		<version>${modbus-jamod.version}</version>
@@ -211,8 +216,8 @@
 			<artifactId>maven-compiler-plugin</artifactId>
 			<version>3.1</version>
 			<configuration>
-				<source>1.5</source>
-				<target>1.5</target>
+				<source>1.6</source>
+				<target>1.6</target>
 			</configuration>
 		</plugin>
 		<!-- Run JUnit tests during "test" phase -->
@@ -488,7 +493,41 @@
 		</plugin>
  -->		
         <!-- Create distribution during "package" phase -->
-		<plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-shade-plugin</artifactId>
+            <version>2.1</version>
+            <configuration>
+              <filters>
+                  <filter>
+                      <artifact>*:*</artifact>
+                      <excludes>
+                          <exclude>META-INF/*.SF</exclude>
+                          <exclude>META-INF/*.DSA</exclude>
+                          <exclude>META-INF/*.RSA</exclude>
+                      </excludes>
+                  </filter>
+              </filters>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <manifestEntries>
+                    <Main-Class>org.wattdepot.server.Server</Main-Class>
+                    <Build-Number>${project.version}</Build-Number>
+                  </manifestEntries>
+                </transformer>
+              </transformers>
+            </configuration>
+            <executions>
+                <execution>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>shade</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
+<!-- 		<plugin>
 			<artifactId>maven-assembly-plugin</artifactId>
 			<version>${assembly.plugin.version}</version>
 			<executions>
@@ -509,7 +548,7 @@
                   </archive>
                 </configuration>
 			</execution>
-			<!-- zip source -->
+			zip source
 			<execution>
 				<id>source</id>
 				<phase>package</phase>
@@ -523,7 +562,7 @@
 					</descriptorRefs>
 				</configuration>
 			</execution>
-			<!-- zip javadocs -->
+			zip javadocs
 			<execution>
 				<id>javadoc</id>
 				<phase>package</phase>
@@ -535,13 +574,13 @@
 					<descriptors><descriptor>${config.dir}/javadoc-assembly.xml</descriptor></descriptors>
 				</configuration>
 			</execution>
-			<!-- zip project -->
+			zip project
 			<execution>
 				<id>dist</id>
 				<phase>package</phase>
 				<goals><goal>single</goal></goals>
 				<configuration>
-					<finalName>${project.artifactId}-${build.version}</finalName>
+					<finalName>${project.artifactId}-${project.version}</finalName>
 					<outputDirectory>${project.build.directory}/dist</outputDirectory>
 					<formats><format>zip</format></formats>
 					<filters>
@@ -553,7 +592,7 @@
 				</configuration>
 			</execution>
 			</executions>
-		</plugin>
+		</plugin> -->
 		<!-- Package it up for Heroku during "package" phase -->
 		<plugin>
 			<groupId>org.codehaus.mojo

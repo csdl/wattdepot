@@ -1487,6 +1487,7 @@ public class WattDepotClient {
     finally {
       if (client != null) {
         client.release();
+        client = null;
       }
     }
 

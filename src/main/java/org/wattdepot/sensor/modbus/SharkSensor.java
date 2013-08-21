@@ -3,7 +3,9 @@ package org.wattdepot.sensor.modbus;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Date;
+
 import javax.xml.datatype.XMLGregorianCalendar;
+
 import net.wimpi.modbus.Modbus;
 import net.wimpi.modbus.io.ModbusTCPTransaction;
 import net.wimpi.modbus.msg.ExceptionResponse;
@@ -12,6 +14,7 @@ import net.wimpi.modbus.msg.ReadMultipleRegistersRequest;
 import net.wimpi.modbus.msg.ReadMultipleRegistersResponse;
 import net.wimpi.modbus.net.TCPMasterConnection;
 import net.wimpi.modbus.util.ModbusUtil;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -121,8 +124,8 @@ public class SharkSensor extends MultiThreadedSensor {
     }
     catch (Exception e) {
       System.err.format(
-          "Unable to retrieve energy format parameters from meter %s: %s, retrying.%n",
-          this.sourceKey, e.getMessage());
+          "%s: Unable to retrieve energy format parameters from meter %s: %s, retrying.%n",
+          Tstamp.makeTimestamp(), this.sourceKey, e.getMessage());
       return false;
     }
     if (response instanceof ReadMultipleRegistersResponse) {
@@ -228,23 +231,28 @@ public class SharkSensor extends MultiThreadedSensor {
     TCPMasterConnection connection = null;
     ModbusTCPTransaction transaction = null;
     ReadMultipleRegistersRequest request = null;
+    ModbusResponse response = null;
 
     // Open the connection
     connection = new TCPMasterConnection(address);
-    connection.setPort(port);
-    connection.connect();
+    try {
+      connection.setPort(port);
+      connection.connect();
 
-    // Prepare the request
-    request = new ReadMultipleRegistersRequest(register, length);
+      // Prepare the request
+      request = new ReadMultipleRegistersRequest(register, length);
 
-    // Prepare the transaction
-    transaction = new ModbusTCPTransaction(connection);
-    transaction.setRequest(request);
-    transaction.execute();
-    ModbusResponse response = transaction.getResponse();
+      // Prepare the transaction
+      transaction = new ModbusTCPTransaction(connection);
+      transaction.setRequest(request);
+      transaction.execute();
+      response = transaction.getResponse();
 
-    // Close the connection
-    connection.close();
+    } 
+    finally {
+      // Close the connection
+      connection.close();
+    }
 
     return response;
   }
