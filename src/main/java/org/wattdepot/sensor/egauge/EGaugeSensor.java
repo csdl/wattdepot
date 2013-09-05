@@ -78,9 +78,9 @@ public class EGaugeSensor extends MultiThreadedSensor {
   public void run() {
     SensorData data = null;
     // CAM using /cgi-bin/egauge?tot provides v0.01 format data
-    String eGaugeUri = "http://" + meterHostname + "/cgi-bin/egauge?tot";
-    // CAM using v1&tot returns v1.0 xml data.
-    // String eGaugeUri = "http://" + meterHostname + "/cgi-bin/egauge?v1&tot";
+//    String eGaugeUri = "http://" + meterHostname + "/cgi-bin/egauge?tot";
+    // CAM using v1&tot&inst returns v1.0 xml data.
+    String eGaugeUri = "http://" + meterHostname + "/cgi-bin/egauge?v1&tot&inst";
 
     DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
     domFactory.setNamespaceAware(true);
@@ -106,20 +106,29 @@ public class EGaugeSensor extends MultiThreadedSensor {
       XPath powerXpath = factory.newXPath();
       XPath energyXpath = factory.newXPath();
       // Path to get the current power consumed measured by the meter in watts
-      String exprPowerString =
-          "//meter[@type='total' and @title='" + this.registerName + "']/power/text()";
+      // CAM the following is the v0.01 path
+//      String exprPowerString =
+//          "//meter[@type='total' and @title='" + this.registerName + "']/power/text()";
+      String exprPowerString = 
+          "//r[@rt='total' and @t='P' and @n='" + this.registerName + "']/i/text()";
       XPathExpression exprPower = powerXpath.compile(exprPowerString);
       // Path to get the energy consumed month to date in watt hours
+      // CAM the following is for the v0.01 data format
+//      String exprEnergyString =
+//          "//meter[@type='total' and @title='" + this.registerName + "']/energy/text()";
       String exprEnergyString =
-          "//meter[@type='total' and @title='" + this.registerName + "']/energy/text()";
+          "//r[@rt='total' and @t='P' and @n='" + this.registerName + "']/v/text()";
       XPathExpression exprEnergy = energyXpath.compile(exprEnergyString);
       Object powerResult = exprPower.evaluate(doc, XPathConstants.NUMBER);
       Object energyResult = exprEnergy.evaluate(doc, XPathConstants.NUMBER);
 
       // power is given in W
       Double currentPower = (Double) powerResult;
+      // CAM in v0.01 energy is given in kWh
       // energy is given in kWh
-      Double energyToDate = ((Double) energyResult) * 1000;
+//      Double energyToDate = ((Double) energyResult) * 1000;
+      // CAM in v1.0 energy is given in Ws WattDepot stores it in Wh
+      Double energyToDate = ((Double) energyResult) / 3600;
       data = new SensorData(timestamp, toolName, this.sourceUri);
       if (currentPower <= 0) {
         data.addProperty(new Property(SensorData.POWER_CONSUMED, currentPower * -1));
