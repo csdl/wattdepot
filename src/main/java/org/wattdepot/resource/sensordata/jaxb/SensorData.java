@@ -412,7 +412,7 @@ public class SensorData implements Serializable, Comparable<SensorData>{
   public int compareTo(SensorData o) {
     // if o is null, throw NullPointerException, per Comparable JavaDoc
     if (o == null) {
-      throw new NullPointerException("Tried to compare SensorDataRef with null");
+      throw new NullPointerException("Tried to compare SensorData with null");
     }
     if (o.equals(this)) {
       return 0;
