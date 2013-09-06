@@ -1,12 +1,40 @@
 Backing Up And Restoring A WattDepot PostgreSQL Database
 ========================================================
 
-A. Create Backup
-----------------
+Requirements
+------------
+
+This guide assumes:
+* The wattdepot server is running on a Linux OS.
+* The wattdepot server is being run as user "wattdepot," with a home directory 
+  located at /home/wattdepot.
+
+The following users and directories must exist in order to create a backup:
+* System user: "wattdepot" (does not require root privileges)
+  * WARNING:
+    If you are using a user other than "wattdepot" to run wattdepot, you will 
+    need to edit references to /home/wattdepot in wattdepot_backup_script.sh
+    and wattdepot_backup_runner.sh to match the location of your user home 
+    directory.
+* PostgreSQL user "wattdepot"
+  * PostgreSQL user "wattdepot" must be the owner of the "wattdepot" database.
+* PostgreSQL database "wattdepot"
+
+Move Backup Script
+------------------
+
+Assuming you have already downloaded the WattDepot repository, copy the 
+localBackup directory into the wattdepot user's home directory:
+
+  % cp -R <path-to-repository>/localBackup /home/wattdepot/
+
+Create Backup Manually
+----------------------
 
 This section describes how to use the script to make manual backups.
 
 1. On your server, log in as, or switch to, the "wattdepot" user.
+
 2. Export the password for the PostgreSQL "wattdepot" user as the PGPASSWORD 
    environment variable: 
    
@@ -27,7 +55,7 @@ This section describes how to use the script to make manual backups.
           % sudo mkdir /wattdepot-backups/monthly
           % chown wattdepot:wattdepot /wattdepot-backups 
           
-2. In the wattdepot user's home directory, run the script wattdepot_backup_script.sh.
+4. In the wattdepot user's home directory, run the script wattdepot_backup_script.sh.
 
       % sh wattdepot_backup_script.sh
       
@@ -57,13 +85,42 @@ This section describes how to use the script to make manual backups.
      % sh wattdepot_backup_script.sh --delete-auto
    ----------------------------------------------------------------------------
 
-3. Look for the resulting backup file in /wattdepot-backups.
-4. Unset the PGPASSWORD environment variable:
+5. Confirm that the backup file exists in /wattdepot-backups.
+6. Unset the PGPASSWORD environment variable:
 
       $ unset PGPASSWORD
 
-B. Restore Backup
------------------
+Run Backup Automatically
+------------------------
+
+This is optional. Configuring cron jobs is beyond the scope of this guide.
+
+Cron jobs should run wattdepot_backup_runner.sh, not wattdepot_backup_script.sh.
+wattdepot_backup_runner.sh sets the PGPASSWORD environment variable and runs 
+wattdepot_backup_script with --delete-auto. This removes backups that are 
+greater than 7 days old without asking the user to confirm.
+
+To run the backup script without needing user input of the PGPASSWORD, edit 
+the wattdepot_backup_runner.sh file. Change the PGPASSWORD value to match the 
+password of the wattdepot PostgreSQL user:
+
+  export PGPASSWORD="PASSWORD"
+
+If you are running the wattdepot server as a user other than "wattdepot,"
+you will need to change this line to point to the correct home directory: 
+
+  sh /home/wattdepot/localBackup/wattdepot_backup_script.sh --delete-auto
+
+Note:
+-------------------------------------------------------------------------------
+Storing a database password in plain text is not secure. If this script 
+is being used on a production server, make sure access to the directory 
+where wattdepot_backup_runner.sh is located is restricted to the 
+appropriate users, and that any other appropriate restrictions are enforced.
+-------------------------------------------------------------------------------
+
+Restore Backup
+--------------
 
 Prerequisites:
 * The machine you are restoring the backup to must have:
@@ -72,61 +129,71 @@ Prerequisites:
 
 1. Log onto the machine that will have the WattDepot backup loaded into it.
 2. If a user named "wattdepot" does not exist, create a user "wattdepot" 
-   with the same password as the "wattdepot" user on Mopsa.
-3. Switch to the "wattdepot" user.
+   with the same password as the "wattdepot" user on Mopsa:
+   
+     % useradd wattdepot
+     % passwd wattdepot
+     Password: (Enter password)
+   
+3. Switch to the "wattdepot" user:
+
+     % su wattdepot
+     Password:  (Enter password)
+
 4. Switch to the "wattdepot" user's home directory.
 
-      % cd ~/home/wattdepot
+     % cd ~/home/wattdepot
 
 5. Copy the backup file wattdepot_backup_<timestamp>.tar.gz onto the host machine, 
    or onto a drive that is accessible to the host machine.
+   
 6. Extract the backup file and switch into it:
 
-      % tar xzvf wattdepot_backup_<timestamp>.tar.gz
-      % cd wattdepot_backup_<timestamp>
+     % tar xzvf wattdepot_backup_<timestamp>.tar.gz
+     % cd wattdepot_backup_<timestamp>
 
 7. Copy the ".wattdepot" and "wattdepot-2.2.1" directories into /home/wattdepot:
 
-      % cp -R ./.wattdepot /home/wattdepot/.wattdepot/
-      % cp -R ./wattdepot-2.2.1 /home/wattdepot/wattdepot-2.2.1/
+     % cp -R ./.wattdepot /home/wattdepot/.wattdepot/
+     % cp -R ./wattdepot-2.2.1 /home/wattdepot/wattdepot-2.2.1/
 
 8. Change ownership of the ".wattdepot" and "wattdepot-2.2.1" directories to the "wattdepot" user:
 
-      % chown -R wattdepot:wattdepot /home/wattdepot/.wattdepot/
-      % chown -R wattdepot:wattdepot /home/wattdepot/wattdepot-2.2.1/
+     % chown -R wattdepot:wattdepot /home/wattdepot/.wattdepot/
+     % chown -R wattdepot:wattdepot /home/wattdepot/wattdepot-2.2.1/
 
 9. Log into PostgreSQL. Create the "wattdepot" user and "wattdepot" database 
    if they do not exist. Replace '<WATTDEPOT-POSTGRES-USER-PASSWORD>' with the 
    password used for the "wattdepot" user on the original server where the backup 
    was made.
 
-      % psql -U postgres
-      postgres=# CREATE USER wattdepot WITH PASSWORD '<WATTDEPOT-POSTGRES-USER-PASSWORD>';
-      CREATE ROLE
-      postgres=# CREATE DATABASE wattdepot WITH OWNER wattdepot;
-      CREATE DATABASE
-      postgres=# ALTER USER wattdepot WITH SUPERUSER;
+     % psql -U postgres
+     postgres=# CREATE USER wattdepot WITH PASSWORD '<WATTDEPOT-POSTGRES-USER-PASSWORD>';
+     CREATE ROLE
+     postgres=# CREATE DATABASE wattdepot WITH OWNER wattdepot;
+     CREATE DATABASE
+     postgres=# ALTER USER wattdepot WITH SUPERUSER;
 
 10. Exit the PostgreSQL prompt.
 
-      % postgres=# \q
+     % postgres=# \q
 
 11. Load the plaintext_backup.dump file into the "wattdepot" database: 
 
-      % psql -U wattdepot --set ON_ERROR_STOP=on wattdepot < plaintext_backup.dump
+     % psql -U wattdepot --set ON_ERROR_STOP=on wattdepot < plaintext_backup.dump
 
-C. Verify
----------
+Verify
+------
 
 The Wattdepot server must be started as the "wattdepot" user.
 
 1. Switch to the wattdepot user's home directory:
 
-      % cd /home/wattdepot
+     % cd /home/wattdepot
 
 2. Start the server:
 
-      % /usr/bin/java -cp /home/wattdepot/wattdepot-2.2.1/wattdepot-2.2.1.jar org.wattdepot.server.Server -d server-uh
+     % /usr/bin/java -cp /home/wattdepot/wattdepot-2.2.1/wattdepot-2.2.1.jar org.wattdepot.server.Server -d server-uh
 
 3. Open a web browser. 
    * Firefox is recommended. Internet Explorer may not work with WattDepot.
@@ -156,25 +223,3 @@ The Wattdepot server must be started as the "wattdepot" user.
    
 7. The information displayed from both servers should be the same.
    When finished, press Control+C to stop the WattDepot server.
-   
-D. Run Backup Automatically
----------------------------
-
-This step is optional.
-
-To run the backup script without needing user input of the PGPASSWORD, edit 
-this line of the wattdepot_backup_runner.sh's PGPASSWORD value to match the 
-password of the 'wattdepot' PostgreSQL user:
-
-  % export PGPASSWORD="PASSWORD"
-  
-The wattdepot_backup_runner.sh script sets PGPASSWORD and runs 
-wattdepot_backup_script.sh with the --delete-auto flag.
-
-Note:
--------------------------------------------------------------------------------
-Storing a database password in plain text is not secure. If this script 
-is being used on a production server, make sure access to the directory 
-where wattdepot_backup_runner.sh is located is restricted to the 
-appropriate users, and that any other appropriate restrictions are enforced.
--------------------------------------------------------------------------------
