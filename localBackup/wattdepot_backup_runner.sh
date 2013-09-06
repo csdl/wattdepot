@@ -3,6 +3,6 @@
 # Replace "PASSWORD" with the PostgreSQL password 
 # of PostgreSQL's 'wattdepot' user.
 
-export PGPASSWORD="IwantKnuts"
+export PGPASSWORD="PASSWORD"
 sh ./wattdepot_backup_script.sh --delete-auto
 unset PGPASSWORD
