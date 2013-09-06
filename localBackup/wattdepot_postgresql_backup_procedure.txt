@@ -1,7 +1,7 @@
 Backing Up And Restoring A WattDepot PostgreSQL Database
 ========================================================
 
-1. Create Backup
+A. Create Backup
 ----------------
 
 This section describes how to use the script to make manual backups.
@@ -22,28 +22,53 @@ This section describes how to use the script to make manual backups.
           % sudo mkdir /wattdepot-backups
           % chown wattdepot:wattdepot /wattdepot-backups 
           
+    3b. Create the directory wattdepot-backups/monthly as well:
+    
+          % sudo mkdir /wattdepot-backups/monthly
+          % chown wattdepot:wattdepot /wattdepot-backups 
+          
 2. In the wattdepot user's home directory, run the script wattdepot_backup_script.sh.
 
       % sh wattdepot_backup_script.sh
+      
+   The wattdepot_backup_script.sh script creates a .tar.gz backup. The name of 
+   this file begins with "wattdepot_backup" and ends in a timestamp. It contains 
+   the following:
+     * A plain text dump of the wattdepot database: plaintext_backup.dump
+     * The /home/wattdepot/.wattdepot directory
+     * The /home/wattdepot/wattdepot-2.2.1 directory
+   
+   This script makes one backup in /wattdepot-backups. 
+   If it is the first day of a month, it will copy the backup into 
+   /wattdepot-backups/monthly/. This backup's name will begin with 
+   "wattdepot_monthly_backup" and end in a timestamp.
+   
+   If the script finds any backups that were last modified more than seven 
+   days (604800 seconds) ago, it will ask the user's permission before 
+   deleting them permanently. 
+   
+   The script does not delete backups in /wattdepot-backups/monthly.
+   
+   Note:
+   ----------------------------------------------------------------------------
+   If you want to automatically delete backups older than seven days without 
+   being asked for confirmation, run the script with --delete-auto:
+   
+     % sh wattdepot_backup_script.sh --delete-auto
+   ----------------------------------------------------------------------------
 
 3. Look for the resulting backup file in /wattdepot-backups.
 4. Unset the PGPASSWORD environment variable:
 
       $ unset PGPASSWORD
 
-The wattdepot_backup_script.sh script creates a timestamped .tar.gz backup that 
-contains the following:
-- A plain text dump of the wattdepot database: plaintext_backup.dump
-- The /home/wattdepot/.wattdepot directory
-- The /home/wattdepot/wattdepot-2.2.1 directory
-
-2. Restore Backup
+B. Restore Backup
 -----------------
 
 Prerequisites:
-- The machine you are restoring the backup to must have:
-  - Java 1.6 or newer
-  - PostgreSQL (9.1 preferred)
+* The machine you are restoring the backup to must have:
+  * Java 1.6 or newer
+  * PostgreSQL (9.1 preferred)
 
 1. Log onto the machine that will have the WattDepot backup loaded into it.
 2. If a user named "wattdepot" does not exist, create a user "wattdepot" 
@@ -70,9 +95,10 @@ Prerequisites:
       % chown -R wattdepot:wattdepot /home/wattdepot/.wattdepot/
       % chown -R wattdepot:wattdepot /home/wattdepot/wattdepot-2.2.1/
 
-9. In Postgresql, create the "wattdepot" user and "wattdepot" database if they do not exist.
-   Replace '<WATTDEPOT-POSTGRES-USER-PASSWORD>' with the password used for the "wattdepot" 
-   user on Mopsa.
+9. Log into PostgreSQL. Create the "wattdepot" user and "wattdepot" database 
+   if they do not exist. Replace '<WATTDEPOT-POSTGRES-USER-PASSWORD>' with the 
+   password used for the "wattdepot" user on the original server where the backup 
+   was made.
 
       % psql -U postgres
       postgres=# CREATE USER wattdepot WITH PASSWORD '<WATTDEPOT-POSTGRES-USER-PASSWORD>';
@@ -81,15 +107,15 @@ Prerequisites:
       CREATE DATABASE
       postgres=# ALTER USER wattdepot WITH SUPERUSER;
 
-10. Exit Postgres.
+10. Exit the PostgreSQL prompt.
 
       % postgres=# \q
 
-11. Load the plaintext_backup.dump file into the ""wattdepot" database: 
+11. Load the plaintext_backup.dump file into the "wattdepot" database: 
 
       % psql -U wattdepot --set ON_ERROR_STOP=on wattdepot < plaintext_backup.dump
 
-3. Verify
+C. Verify
 ---------
 
 The Wattdepot server must be started as the "wattdepot" user.
@@ -102,19 +128,53 @@ The Wattdepot server must be started as the "wattdepot" user.
 
       % /usr/bin/java -cp /home/wattdepot/wattdepot-2.2.1/wattdepot-2.2.1.jar org.wattdepot.server.Server -d server-uh
 
-3. Open a web browser. (Firefox is recommended. Internet Explorer may not work.)
-   - Javascript must be enabled.
-   - The Flash Player plugin must be installed and enabled.
-4. Assuming the web browser is on the local machine, go to http://localhost:8190/wattdepot/SPA/index.html.
+3. Open a web browser. 
+   * Firefox is recommended. Internet Explorer may not work with WattDepot.
+   * Javascript must be enabled.
+   * The Flash Player plugin must be installed and enabled.
+   
+4. Assuming the web browser is on the local machine, go to the SPA page at 
+   http://localhost:8190/wattdepot/SPA/index.html.
+   
    Note:
-   If the local machine is headless (no GUI), wget cannot be used to get data from the WattDepot SPA page.
-   The SPA page must be accessed from a graphical web browser.
+   ----------------------------------------------------------------------------
+   If the local machine is headless (no GUI), wget cannot be used to get data 
+   from the WattDepot SPA page. The SPA page must be accessed from a graphical 
+   web browser.
+   ----------------------------------------------------------------------------
 
 5. On the SPA page, select a source, a data type, and a date range that falls 
    within the time period before the backup was taken. Click "Visualize."
+
 6. In another tab or another instance of the browser, go to 
-   http://mopsa.hawaii.edu:8190/wattdepot/SPA/index.html. 
+   http://<SERVER_URL>:8190/wattdepot/SPA/index.html, where 
+   <SERVER_URL> is the URL of the WattDepot server where the 
+   backup was made.
+   
    Select the same source, data type, and date range as you did in the 
    previous step. Click "Visualize."
+   
 7. The information displayed from both servers should be the same.
    When finished, press Control+C to stop the WattDepot server.
+   
+D. Run Backup Automatically
+---------------------------
+
+This step is optional.
+
+To run the backup script without needing user input of the PGPASSWORD, edit 
+this line of the wattdepot_backup_runner.sh's PGPASSWORD value to match the 
+password of the 'wattdepot' PostgreSQL user:
+
+  % export PGPASSWORD="PASSWORD"
+  
+The wattdepot_backup_runner.sh script sets PGPASSWORD and runs 
+wattdepot_backup_script.sh with the --delete-auto flag.
+
+Note:
+-------------------------------------------------------------------------------
+Storing a database password in plain text is not secure. If this script 
+is being used on a production server, make sure access to the directory 
+where wattdepot_backup_runner.sh is located is restricted to the 
+appropriate users, and that any other appropriate restrictions are enforced.
+-------------------------------------------------------------------------------
