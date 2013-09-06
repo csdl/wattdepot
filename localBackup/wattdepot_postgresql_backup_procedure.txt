@@ -1,0 +1,120 @@
+Backing Up And Restoring A WattDepot PostgreSQL Database
+========================================================
+
+1. Create Backup
+----------------
+
+This section describes how to use the script to make manual backups.
+
+1. On your server, log in as, or switch to, the "wattdepot" user.
+2. Export the password for the PostgreSQL "wattdepot" user as the PGPASSWORD 
+   environment variable: 
+   
+      % export PGPASSWORD="YOUR-PASSWORD-HERE"
+      
+3. Check that the /wattdepot-backups directory exists and is owned by user wattdepot: 
+
+      % ls -al / | grep wattdepot-backups
+      drwxr-xr-x.   2 wattdepot wattdepot  4096 Aug 30 14:34 wattdepot-backups
+      
+    3a. If wattdepot-backups does not exist, create it and take ownership of it: 
+    
+          % sudo mkdir /wattdepot-backups
+          % chown wattdepot:wattdepot /wattdepot-backups 
+          
+2. In the wattdepot user's home directory, run the script wattdepot_backup_script.sh.
+
+      % sh wattdepot_backup_script.sh
+
+3. Look for the resulting backup file in /wattdepot-backups.
+4. Unset the PGPASSWORD environment variable:
+
+      $ unset PGPASSWORD
+
+The wattdepot_backup_script.sh script creates a timestamped .tar.gz backup that 
+contains the following:
+- A plain text dump of the wattdepot database: plaintext_backup.dump
+- The /home/wattdepot/.wattdepot directory
+- The /home/wattdepot/wattdepot-2.2.1 directory
+
+2. Restore Backup
+-----------------
+
+Prerequisites:
+- The machine you are restoring the backup to must have:
+  - Java 1.6 or newer
+  - PostgreSQL (9.1 preferred)
+
+1. Log onto the machine that will have the WattDepot backup loaded into it.
+2. If a user named "wattdepot" does not exist, create a user "wattdepot" 
+   with the same password as the "wattdepot" user on Mopsa.
+3. Switch to the "wattdepot" user.
+4. Switch to the "wattdepot" user's home directory.
+
+      % cd ~/home/wattdepot
+
+5. Copy the backup file wattdepot_backup_<timestamp>.tar.gz onto the host machine, 
+   or onto a drive that is accessible to the host machine.
+6. Extract the backup file and switch into it:
+
+      % tar xzvf wattdepot_backup_<timestamp>.tar.gz
+      % cd wattdepot_backup_<timestamp>
+
+7. Copy the ".wattdepot" and "wattdepot-2.2.1" directories into /home/wattdepot:
+
+      % cp -R ./.wattdepot /home/wattdepot/.wattdepot/
+      % cp -R ./wattdepot-2.2.1 /home/wattdepot/wattdepot-2.2.1/
+
+8. Change ownership of the ".wattdepot" and "wattdepot-2.2.1" directories to the "wattdepot" user:
+
+      % chown -R wattdepot:wattdepot /home/wattdepot/.wattdepot/
+      % chown -R wattdepot:wattdepot /home/wattdepot/wattdepot-2.2.1/
+
+9. In Postgresql, create the "wattdepot" user and "wattdepot" database if they do not exist.
+   Replace '<WATTDEPOT-POSTGRES-USER-PASSWORD>' with the password used for the "wattdepot" 
+   user on Mopsa.
+
+      % psql -U postgres
+      postgres=# CREATE USER wattdepot WITH PASSWORD '<WATTDEPOT-POSTGRES-USER-PASSWORD>';
+      CREATE ROLE
+      postgres=# CREATE DATABASE wattdepot WITH OWNER wattdepot;
+      CREATE DATABASE
+      postgres=# ALTER USER wattdepot WITH SUPERUSER;
+
+10. Exit Postgres.
+
+      % postgres=# \q
+
+11. Load the plaintext_backup.dump file into the ""wattdepot" database: 
+
+      % psql -U wattdepot --set ON_ERROR_STOP=on wattdepot < plaintext_backup.dump
+
+3. Verify
+---------
+
+The Wattdepot server must be started as the "wattdepot" user.
+
+1. Switch to the wattdepot user's home directory:
+
+      % cd /home/wattdepot
+
+2. Start the server:
+
+      % /usr/bin/java -cp /home/wattdepot/wattdepot-2.2.1/wattdepot-2.2.1.jar org.wattdepot.server.Server -d server-uh
+
+3. Open a web browser. (Firefox is recommended. Internet Explorer may not work.)
+   - Javascript must be enabled.
+   - The Flash Player plugin must be installed and enabled.
+4. Assuming the web browser is on the local machine, go to http://localhost:8190/wattdepot/SPA/index.html.
+   Note:
+   If the local machine is headless (no GUI), wget cannot be used to get data from the WattDepot SPA page.
+   The SPA page must be accessed from a graphical web browser.
+
+5. On the SPA page, select a source, a data type, and a date range that falls 
+   within the time period before the backup was taken. Click "Visualize."
+6. In another tab or another instance of the browser, go to 
+   http://mopsa.hawaii.edu:8190/wattdepot/SPA/index.html. 
+   Select the same source, data type, and date range as you did in the 
+   previous step. Click "Visualize."
+7. The information displayed from both servers should be the same.
+   When finished, press Control+C to stop the WattDepot server.
