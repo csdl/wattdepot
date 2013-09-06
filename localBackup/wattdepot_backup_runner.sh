@@ -4,5 +4,5 @@
 # of PostgreSQL's 'wattdepot' user.
 
 export PGPASSWORD="PASSWORD"
-sh ./wattdepot_backup_script.sh --delete-auto
+sh /home/wattdepot/localBackup/wattdepot_backup_script.sh --delete-auto
 unset PGPASSWORD
