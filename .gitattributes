@@ -1,0 +1,5 @@
+# Always convert line endings to Linux on checkout.
+* text eol=lf
+*.jpg -text
+*.png -text
+*.gif -text
