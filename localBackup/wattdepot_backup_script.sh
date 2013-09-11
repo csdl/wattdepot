@@ -56,6 +56,7 @@ unset NEW_DAILY_BACKUP
 # Remove old daily backups
 cd /wattdepot-backups
 export CURRENT_TIME=$(date +%s)
+export OLD_BACKUP_COUNT=0
 echo "Removing daily backups more than 7 days (604800 seconds) old."
 echo "The following backups will be deleted:"
 for FILE in $(find ./*.tar.gz -maxdepth 1 -type f); do
@@ -63,23 +64,32 @@ for FILE in $(find ./*.tar.gz -maxdepth 1 -type f); do
     export CURRENT_FILE_AGE=$(expr $CURRENT_TIME - $CURRENT_FILE_TIME)
     if [ $CURRENT_FILE_AGE -gt 604800 ];
         then
+            export OLD_BACKUP_COUNT=$(expr $OLD_BACKUP_COUNT + 1)
             echo "$FILE"
     fi
     unset CURRENT_FILE_TIME
     unset CURRENT_FILE_AGE
 done
 
-# If the --delete-auto flag is set, don't ask the user. 
-# Just delete the old backups automatically. 
-if [ $1 = "--delete-auto" ];
-  then
-      export DO_DELETE_BACKUPS="Yes"
-  else
-      # Use junk value for initial value
-      export DO_DELETE_BACKUPS="Foo"
+if [ $OLD_BACKUP_COUNT -eq 0 ];
+    then
+        echo "No old backups to delete."
+        echo "Script completed successfully."
+        unset OLD_BACKUP_COUNT
+        exit
 fi
 
-while [ $DO_DELETE_BACKUPS != "Yes" -a $DO_DELETE_BACKUPS != "No" ];
+# If the --delete-auto flag is set, don't ask the user. 
+# Just delete the old backups automatically. 
+if [ "$1" = "--delete-auto" ];
+    then
+        export DO_DELETE_BACKUPS="Yes"
+    else
+        # Use junk value for initial value
+        export DO_DELETE_BACKUPS="Foo"
+fi
+
+while [ $DO_DELETE_BACKUPS != "Yes" ] && [ $DO_DELETE_BACKUPS != "No" ];
 do
     echo "Delete these backups? This operation cannot be undone. [Yes/No]"
     read DO_DELETE_BACKUPS
@@ -90,12 +100,13 @@ do
             if [ $DO_DELETE_BACKUPS = "No" ];
                 then
                     echo "Backup process completed without removing old backups."
-                    unset $DO_DELETE_BACKUPS
+                    echo "Script completed successfully."
+                    unset DO_DELETE_BACKUPS
                     exit
             fi
     fi
 done
-unset $DO_DELETE_BACKUPS
+unset DO_DELETE_BACKUPS
 
 echo "Removing daily backups more than 7 days (604800 seconds) old."
 for FILE in $(find ./*.tar.gz -maxdepth 1 -type f); do
