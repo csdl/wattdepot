@@ -254,8 +254,13 @@ The Wattdepot server must be started as the "wattdepot" user.
    Location="City, State Zipcode" Description="Meter installed in Building A 7th floor
    lounge electrical closet." Href="http://server.example.org:8190/wattdepot/sources/BldgA-07-lounge"/>
 
-6. Select any of the sources, then go to the URL in its "Href" parameter. 
-   (In the above example, the "Href" URL is http://server.example.org:8190/wattdepot/sources/BldgA-07-lounge). 
+6. Select any of the sources, then copy the URL in its "Href" parameter. Paste the URL into a browser tab 
+   and make the following changes: 
+   * Replace the "server.example.org:8190" part with "localhost:8190."
+   * Add a /summary to the end.
+   * For example, http://server.example.org:8190/wattdepot/sources/BldgA-07-lounge would 
+     become http://localhost:8190/wattdepot/sources/BldgA-07-lounge/summary.
+   
    You will see an XML file that contains a SourceSummary.
    
 7. In the SourceSummary, check the value of the LastSensorData field. It should be fairly 
@@ -267,7 +272,7 @@ The Wattdepot server must be started as the "wattdepot" user.
    
    -<SourceSummary>
     -<Href>
-      http://server.example.org:8190/wattdepot/sources/	BldgA-07-lounge
+      http://server.example.org:8190/wattdepot/sources/BldgA-07-lounge
      </Href>
      <FirstSensorData>2012-04-05T13:16:29.891-10:00</FirstSensorData>
      <LastSensorData>2013-09-06T23:55:19.934-10:00</LastSensorData>
