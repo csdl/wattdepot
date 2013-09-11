@@ -2,8 +2,8 @@
 # 1. Backups are stored in the /wattdepot-backups directory.
 #    They are .tar.gz archives that contain:
 #    - A plain text dump of the wattdepot database
-#    - /home/wattdepot/.wattdepot/
-#    - /home/wattdepot/wattdepot-2.2.1/
+#    - $WATTDEPOT_USER_HOMEDIR/.wattdepot/
+#    - $WATTDEPOT_USER_HOMEDIR/wattdepot-$WATTDEPOT_VERSION
 # 2. Backup names are timestamped to the second.
 # 3. Backups taken on the first day of the month are copied to 
 #    a new monthly backup in the /wattdepot-backups/monthly/ directory.
@@ -17,15 +17,21 @@
 #    when it runs.
 
 cd /wattdepot-backups
+# Set WATTDEPOT_VERSION to your current version
+export WATTDEPOT_VERSION="2.2.2"
+# Set location of pg_dump executable
+export PG_DUMP_PATH="/usr/pgsql-9.1/bin"
+# Set location of wattdepot user's home directory (where .wattdepot and wattdepot-$WATTDEPOT_VERSION are)
+export WATTDEPOT_USER_HOMEDIR="/home/wattdepot"
 export BACKUPTIME=$(date +"%Y-%m-%d_%H_%M_%S")
 export NEW_DAILY_BACKUP="wattdepot_backup_$BACKUPTIME"
 echo "Creating backup: /wattdepot-backups/$NEW_DAILY_BACKUP"
 mkdir $NEW_DAILY_BACKUP
 cd $NEW_DAILY_BACKUP
 touch plaintext_backup.dump
-/usr/pgsql-9.1/bin/pg_dump -Fp --no-acl --no-owner -h localhost -U wattdepot wattdepot > plaintext_backup.dump
-cp -R /home/wattdepot/.wattdepot /wattdepot-backups/$NEW_DAILY_BACKUP/.wattdepot
-cp -R /home/wattdepot/wattdepot-2.2.1 /wattdepot-backups/$NEW_DAILY_BACKUP/wattdepot-2.2.1
+$PG_DUMP_PATH/pg_dump -Fp --no-acl --no-owner -h localhost -U wattdepot wattdepot > plaintext_backup.dump
+cp -R $WATTDEPOT_USER_HOMEDIR/.wattdepot /wattdepot-backups/$NEW_DAILY_BACKUP/.wattdepot
+cp -R $WATTDEPOT_USER_HOMEDIR/wattdepot-$WATTDEPOT_VERSION /wattdepot-backups/$NEW_DAILY_BACKUP/wattdepot-$WATTDEPOT_VERSION
 cd ../
 tar -czf $NEW_DAILY_BACKUP.tar.gz ./$NEW_DAILY_BACKUP/
 rm -rf $NEW_DAILY_BACKUP
@@ -40,8 +46,12 @@ if [ $(date +"%d") = "01" ];
         unset NEW_MONTHLY_BACKUP
 fi
 
-unset NEW_DAILY_BACKUP
+# Environment variables cleanup
+unset WATTDEPOT_VERSION
+unset PG_DUMP_LOCATION
+unset BACKUP_WATTDEPOT_USER_HOME
 unset BACKUPTIME
+unset NEW_DAILY_BACKUP
 
 # Remove old daily backups
 cd /wattdepot-backups
@@ -59,12 +69,13 @@ for FILE in $(find ./*.tar.gz -maxdepth 1 -type f); do
     unset CURRENT_FILE_AGE
 done
 
-# If the --delete-auto flag is set, don't ask the user and 
-# just delete the old backups automatically. 
+# If the --delete-auto flag is set, don't ask the user. 
+# Just delete the old backups automatically. 
 if [ $1 = "--delete-auto" ];
   then
       export DO_DELETE_BACKUPS="Yes"
   else
+      # Use junk value for initial value
       export DO_DELETE_BACKUPS="Foo"
 fi
 
