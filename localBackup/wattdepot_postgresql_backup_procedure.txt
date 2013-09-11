@@ -59,6 +59,9 @@ This section describes how to use the script to make manual backups.
    
       % export PGPASSWORD="YOUR-PASSWORD-HERE"
       
+   If you do not set PGPASSWORD, you will be prompted to enter the password later, 
+   when the backup script is run.
+   
 3. Check that the /wattdepot-backups directory exists and is owned by user wattdepot: 
 
       % ls -al / | grep wattdepot-backups
@@ -67,16 +70,16 @@ This section describes how to use the script to make manual backups.
     3a. If wattdepot-backups does not exist, create it and take ownership of it: 
     
           % sudo mkdir /wattdepot-backups
-          % chown wattdepot:wattdepot /wattdepot-backups 
+          % sudo chown -R wattdepot:wattdepot /wattdepot-backups 
           
     3b. Create the directory wattdepot-backups/monthly as well:
     
           % sudo mkdir /wattdepot-backups/monthly
-          % chown wattdepot:wattdepot /wattdepot-backups 
+          % sudo chown -R wattdepot:wattdepot /wattdepot-backups/monthly
           
 4. In the wattdepot user's home directory, run the script wattdepot_backup_script.sh.
 
-      % sh wattdepot_backup_script.sh
+      % sh ./localBackup/wattdepot_backup_script.sh
       
    The wattdepot_backup_script.sh script creates a .tar.gz backup. The name of 
    this file begins with "wattdepot_backup" and ends in a timestamp. It contains 
