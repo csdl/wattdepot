@@ -138,7 +138,7 @@ Note:
 -------------------------------------------------------------------------------
 Storing a database password in plain text is not secure. If this script 
 is being used on a production server, make sure access to the directory 
-where wattdepot_backup_runner.sh is located is restricted to the 
+where run_wattdepot_backup.sh is located is restricted to the 
 appropriate users, and that any other appropriate restrictions are enforced.
 -------------------------------------------------------------------------------
 
