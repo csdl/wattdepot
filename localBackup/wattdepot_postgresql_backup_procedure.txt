@@ -53,7 +53,7 @@ Check the values of these lines:
 
 Edit the values of each environment variable to match your system: 
 * WATTDEPOT_VERSION is the version of your WattDepot installation. 
-* PG_DUMP_PATH is the location of the pgdump executable from the PostgreSQL 
+* PG_DUMP_PATH is the location of the pg_dump executable from the PostgreSQL 
   installation that contains the Wattdepot database.
 * WATTDEPOT_USER_HOMEDIR points to the directory containing the .wattdepot and wattdepot-<x.x.x> directories 
   (where <x.x.x> represents the version number).
