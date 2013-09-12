@@ -118,13 +118,13 @@ Run Backup Automatically
 
 This is optional. Configuring cron jobs is beyond the scope of this guide.
 
-Cron jobs should run wattdepot_backup_runner.sh, not wattdepot_backup_script.sh.
-wattdepot_backup_runner.sh sets the PGPASSWORD environment variable and runs 
+Cron jobs should use run_wattdepot_backup.sh, not wattdepot_backup_script.sh.
+run_wattdepot_backup.sh sets the PGPASSWORD environment variable and runs 
 wattdepot_backup_script with --delete-auto. This removes backups that are 
 greater than 7 days old without asking the user to confirm.
 
 To run the backup script without needing user input of the PGPASSWORD, edit 
-the wattdepot_backup_runner.sh file. Change the PGPASSWORD value to match the 
+the run_wattdepot_backup.sh file. Change the PGPASSWORD value to match the 
 password of the wattdepot PostgreSQL user:
 
   export PGPASSWORD="PASSWORD"
