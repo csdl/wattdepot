@@ -28,6 +28,16 @@ localBackup directory into the wattdepot user's home directory:
 
   % cp -R <path-to-repository>/localBackup /home/wattdepot/
 
+Make sure the wattdepot user owns the directory:
+  
+  % sudo chown -R wattdepot:wattdepot /home/wattdepot/localBackup
+  
+Make the two shell scripts executable:
+
+  % chmod +x /home/wattdepot/localBackup/wattdepot_backup_script.sh
+  % chmod +x /home/wattdepot/localBackup/run_wattdepot_backup.sh
+  
+
 Configure Backup Script
 -----------------------
 
@@ -43,7 +53,8 @@ Check the values of these lines:
 
 Edit the values of each environment variable to match your system: 
 * WATTDEPOT_VERSION is the version of your WattDepot installation. 
-* PG_DUMP_PATH is the location of the pgdump executable from your PostgreSQL installation. 
+* PG_DUMP_PATH is the location of the pgdump executable from the PostgreSQL 
+  installation that contains the Wattdepot database.
 * WATTDEPOT_USER_HOMEDIR points to the directory containing the .wattdepot and wattdepot-<x.x.x> directories 
   (where <x.x.x> represents the version number).
   
@@ -116,23 +127,17 @@ This section describes how to use the script to make manual backups.
 Run Backup Automatically
 ------------------------
 
-This is optional. Configuring cron jobs is beyond the scope of this guide.
+If you want to run backups automatically, you will need to configure 
+cron jobs to run the run_wattdepot_backup.sh script at specific times.
 
-Cron jobs should use run_wattdepot_backup.sh, not wattdepot_backup_script.sh.
 run_wattdepot_backup.sh sets the PGPASSWORD environment variable and runs 
 wattdepot_backup_script with --delete-auto. This removes backups that are 
 greater than 7 days old without asking the user to confirm.
 
-To run the backup script without needing user input of the PGPASSWORD, edit 
-the run_wattdepot_backup.sh file. Change the PGPASSWORD value to match the 
-password of the wattdepot PostgreSQL user:
+1. Edit the run_wattdepot_backup.sh file. Change the PGPASSWORD value to 
+   match the password of the wattdepot PostgreSQL user:
 
   export PGPASSWORD="PASSWORD"
-
-If you are running the wattdepot server as a user other than "wattdepot,"
-you will need to change this line to point to the correct home directory: 
-
-  sh /home/wattdepot/localBackup/wattdepot_backup_script.sh --delete-auto
 
 Note:
 -------------------------------------------------------------------------------
@@ -141,6 +146,20 @@ is being used on a production server, make sure access to the directory
 where run_wattdepot_backup.sh is located is restricted to the 
 appropriate users, and that any other appropriate restrictions are enforced.
 -------------------------------------------------------------------------------
+
+2. If you are running the wattdepot server as a user other than "wattdepot,"
+   you will need to change this line in run_wattdepot_backup.sh to point 
+   to wattdepot_backup_script in that user's home directory:
+
+   sh /home/wattdepot/localBackup/wattdepot_backup_script.sh --delete-auto
+
+3. Configuring specific cron jobs is beyond the scope of this guide.
+   The cron job should refer to the absolute file path of the script.
+   In these instructions, it is /home/wattdepot/localBackup/run_wattdepot_backup.sh.
+
+1. Add new cron jobs to run as the current user by using the crontab editor:
+
+   % crontab -e
 
 Restore Backup
 --------------
@@ -167,12 +186,12 @@ Prerequisites:
    Switch to the directory that contains the backup file.
    
 4. Extract the backup file. If you are the root user, you must use 
-   the "-o" option to change ownership of all the extracted files to root; 
-   otherwise, tar will try to use the user and group IDs from the system 
-   that created the backup, and the operation will fail. The "-o" flag 
-   is the default behavior for for normal users.
+   the "--no-same-owner" option to change ownership of all the extracted files 
+   to root. Otherwise, tar will try to use the user and group IDs from the 
+   system that created the backup, and the operation will fail. The 
+   "--no-same-owner" flag is the default behavior for for normal users.
 
-     % tar -xzvf wattdepot_backup_<timestamp>.tar.gz --o
+     % tar -xzvf wattdepot_backup_<timestamp>.tar.gz --no-same-owner
 	 
 5. Switch into the backup directory: 
 
